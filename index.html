@@ -1,1 +1,236 @@
 
+
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+<!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Project Page For Distributed Training Of Deep Learning Models: Handling Stragglers In Synchronous Training</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta name="author" content="Yehuda Baharav" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Distributed training of deep learning models: handling stragglers in synchronous training" />
+<meta property="og:description" content="Distributed training of deep learning models: handling stragglers in synchronous training" />
+<!-- End Jekyll SEO tag -->
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta property='og:title' content='Distributed training of deep learning models: handling stragglers in synchronous training'/>
+    <meta property='og:description' content='Distributed training of deep learning models: handling stragglers in synchronous training'/>
+    
+    <link rel="stylesheet" href="stylesheet.css">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <a id="skip-to-content" href="#content">Skip to the content.</a>
+
+    <header class="page-header" role="banner">
+      <h1 class="project-name">Distributed Training of Deep Learning Models: Handling Stragglers in Synchronous Training</h1>
+      <!-- <h2 class="project-tagline" color=white><a href="website_homepage.htm">Home</a> <a href="website_hills.htm">Hills Pupil Tailored Website</a></h2> -->
+      <h2 class="project-tagline"><a href="https://www.linkedin.com/in/nir-barazida/"  style="color:#ffffff">Nir Barazida</a>, <a href="https://www.linkedin.com/in/yehuda-baharav/"  style="color:#ffffff">Yehuda Baharav</a></h2>
+      <h3 class="project-tagline" style="color:#ffffff">Reichman University</h3>   
+    </header>
+
+    <main id="content" class="main-content" role="main">
+
+This paper was written by <a href="https://www.linkedin.com/in/nir-barazida/">Nir Barazida</a> and
+      <a href="https://www.linkedin.com/in/yehuda-baharav/">Yehuda Baharav</a> from Reichman University.
+
+<h2 id="abstract">Abstract</h2>
+
+<p>
+  Synchronous distributed training is a common way of distributing the training process of machine learning models with data parallelism. 
+  In synchronous training, a root aggregator node fans-out requests to many leaf nodes that work in parallel 
+  over different input data slices and return their results to the root node to aggregate. Stragglers greatly affect the efficiency of this architecture,
+  and when scaling the number of parameters and data points, it can dramatically increase the training time. In this project,
+  we'll explore the Synchronous stochastic gradient descent method to distribute the training process of deep learning models.
+  We’ll focus our work on the effect of stragglers on their efficiency and research methods and techniques to overcome those challenges.
+</p>
+
+
+
+<h2 id="motivation-and-background">Motivation and background</h2>
+<p>In recent years, we’ve seen the power of large-scale deep learning projects. Projects like GPT-3, its open-source
+    version — GPT-NeoX-20B, and MT-NLG- involve model and dataset sizes that would be unfathomable only a few years
+    ago and currently dominate the state of the art. We can see exponential growth in the complexity of the models,
+    the number of parameters, and the size of datasets. This trend raised the demand for large-scale processing to the
+    point where it has outpaced the increase in computation power of a single machine. The need to distribute the machine
+    learning workload across multiple machines has been raised and led to the Synchronous Distributed Training idea.</p>
+
+<ol>
+  <strong>Note:</strong>
+  There is a difference between distributed training and distributed inference. if a machine learning service receives
+    a large number of requests, we need to distribute the model over several machines to accommodate the load. Scaling
+    training, on the other hand, is when training the same model on more than one machine.
+</ol>
+
+<p>Synchronous stochastic gradient descent is a common way of distributing the training process of machine learning
+    models with data parallelism. In synchronous training, a root aggregator node fans-out requests to many leaf nodes
+    that work in parallel over different input data slices and return their results to the root node to aggregate.</p>
+
+<h2 id="stochastic-gradient-descent">Stochastic Gradient Descent</h2>
+
+<p>Before we dive into the implementation details and challenges, let’s first understand what stochastic gradient
+    descent (SGD) is. Given a dataset D and a model with θ parameters, we’d like to minimize the parameterized empirical
+    loss function, L, for a given (x,y) pairs in D, where x denotes the input sample while y is the output.</p>
+<ol>
+   <center><p><img width="500" src="images/loss_function.png" /></p></center>
+</ol>
+      
+<p>Where l is the loss of a data point (x,y) for model θ. </p>
+<p>A first-order stochastic optimization algorithm optimizes the loss function by iteratively updating θ using a
+    stochastic gradient. Usually, a learning rate will be applied to avoid over or underfitting, and therefore,
+    the SGD will be calculated as follows:</p>
+<ol>
+   <center><center><p><img width="500" src="images/SGD.png" /></p></center>
+</ol>     
+<p>where ɣ is the learning rate or step size at iteration.</p>
+<p>A mini-batch version of the stochastic optimization algorithm computes the gradient over a mini-batch of size B
+    instead of a single data point:</p>
+<ol>
+   <center><p><img width="500" src="images/mini_batch_size_b.png" /></p></center>
+</ol>      
+<h2 id="synchronous-stochastic-gradient-descent">Synchronous stochastic gradient descent</h2>
+<p>Using distributed Synchronous Stochastic Gradient Descent (Sync-SGD), a root aggregator node splits the data into
+    batches and fans-out requests to leaf nodes (worker machines) to process each batch and compute its gradient
+    independently. Once all machines return their result, the root aggregator node averages the gradient and sends
+    it back to the workers to update the model’s parameters. The root aggregator iterates over this process for a given
+    number of epochs or based on a conversion condition.</p>
+<ol>
+  <center><div class="img-Sync-SGD-diagram">
+    <img width="500" img src="images/Sync-SGD-diagram.png" alt="FIGURE 1: DISTRIBUTED SYNCHRONOUS STOCHASTIC GRADIENT DESCENT FLOW" />
+    <p>FIGURE 1: DISTRIBUTED SYNCHRONOUS STOCHASTIC GRADIENT DESCENT FLOW</p>
+</div></center>
+</ol> 
+<h2 id="Issues">Issues</h2> 
+<p>In theory, distributing the computation onto T worker machines should give a performance improvement of xT. Yet, in
+    reality, the performance improvement is rarely xT. The decline in efficiency is caused due to many reasons, where
+    recent researches segment Stragglers= as the main root cause.</p>
+ 
+      
+<p>
+Stragglers are tasks that run much slower than other workers. Slow stragglers may result from failing hardware,
+    contention on shared underlying hardware resources in data centers, or even preemption by other jobs.
+  <a href="https://arxiv.org/abs/1604.00981">Rafal et al. (2017)</a>
+  conducted an experiment that calculated the time it takes to run a Sync-SGD using 100 workers and 19 parameters on
+    the Inception model. These times are presented in Figure 2.
+</p>
+<ol>
+<center><div class="img-cdf-time">
+    <img width="500" img src="images/cdf_time.png" alt="cdf_time" />
+    <p>FIGURE 2: THE EFFECT OF NUMBER OF WORKERS ON THE SYNC-SGD TRAINING TIME, by
+       <a href="https://arxiv.org/abs/1604.00981"> Rafal et al. (2017)</a>
+    </p>
+</div></center>
+</ol>     
+      
+ 
+
+     
+<h2 id="solutions">Solutions</h2>
+
+<p>
+  The “arming race” for state-of-the-art machine learning models has led the industry to develop complex systems that require heavy computing to train.
+  When it comes to such a large scale, any delay in the training cycle sum to a significant delay in the entire training process.
+  To meet those high requirements and reduce the iteration time, researchers from academia and industry invest considerable time and
+  resources in refining and streamlining the training process. we’ve gathered SOTA solutions for stragglers that
+  improves the training time when using the Sync-SGD approach.
+</p>     
+
+<h3 id="drop-stragglers">drop-stragglers</h3> 
+<p>
+  Our initial approach to solving this issue was to drop the results of the stragglers and calculate the gradient using
+    the results from the other workers. I supported this approach using two main hypotheses:
+</p>
+      
+<ul class="ul-2">
+  <li>Low ratio of stragglers to completed tasks — As fanning out to more workers, the number of stragglers increases,
+      however, they only accommodate the ~98th percentile, and therefore their impact will be relatively small on the gradient on average.</li>
+  <li>Reducing a small amount of data from a large-scale dataset has little effect — The Sync-SGD method is used for a
+      large amount of data. Thus, removing the result of the small batches from the training process will have a negligible effect on the gradient on average.</li>
+</ul> 
+<p>
+  However, our intonation was proven wrong by Rafal et al. (2017). They examined the effect of dropping the results of
+    stragglers without using backup workers. Having fewer machines implies a smaller effective mini-batch size and thus
+    greater gradient variance, which requires more iterations for convergence.
+</p>  
+  
+<center><div class="img-iterations">
+    <img width="500" img src="images/iterations.png" alt="iterations" />
+    <p>FIGURE 5: NUMBER OF ITERATIONS TO CONVERGE, by 
+       <a href="https://arxiv.org/abs/1604.00981">Rafal et al. (2017)</a>
+    </p>
+</div></center>
+
+<p>
+ As shown in figure 5, the iterations needed to converge increase when reducing the number of workers we aggregate the gradient from. Thus,
+  our approach reduces the iteration time per batch but increases the number of epochs to conversion and, therefore, the total training time.
+ </p> 
+<h3 id="backup-workers">Backup Workers</h3>
+<p>
+  Rafal et al. (2017) approached the straggler drawback using technics from other distributed systems
+  (<a href="https://www.ibm.com/topics/mapreduce#:~:text=MapReduce%20is%20a%20programming%20paradigm,tasks%20that%20Hadoop%20programs%20perform.">MapReduce</a>,
+  <a href="https://www.microsoft.com/en-us/research/project/dryad/">Dryad</a>,
+  <a href="https://hadoop.apache.org/">Hadoop</a>,
+  and <a href="https://spark.apache.org/">Spark</a>).
+  They choose to add b backup workers to the N workers. Once the root aggregator receives N inputs,
+  it aggregates their gradient and updates the parameters. The slowest b workers’ gradients are dropped when they arrive.
+  From figure 2, we can see that their experiment resulted in 80% of the 98th gradient arriving under 2s,
+  whereas only 30% of the final gradient did. Furthermore, the time to collect the final few gradients grows exponentially,
+  resulting in wasted idle resources and time expended to wait for the slowest gradients.
+</p>
+      
+<p>
+  As part of the research, they ran empirical comparisons of synchronous and 
+  <a href="https://arxiv.org/abs/1609.08326">Asynchronous distributed stochastic gradient descent</a>  
+  algorithms on the
+  <a href="https://cloud.google.com/tpu/docs/inception-v3-advanced">Inception model</a>  
+  (Szegedy et al., 2016) trained on 
+  <a href="https://www.image-net.org/">ImageNet Challenge dataset</a>
+  
+  (Russakovsky et al., 2015).
+</p>
+      
+ <center><div class="img-convergence">
+    <img width="500" img src="images/convergence_plots.png" alt="convergence" />
+    <p>FIGURE 6: CONVERGENCE OF SYNC-SGD AND ASYNC-SGD ON INCEPTION MODEL USING VARYING NUMBER OF MACHINES, by
+       <a href="https://arxiv.org/abs/1604.00981">Rafal et al. (2017)</a>
+    </p>
+</div></center>
+ 
+<p>
+  From figure 6, we can see how using different numbers of workers and backup workers (N+b) has a clear effect on
+    conversion time and rate. Figure 6 (b), shows that fanning out more workers doesn’t necessarily provide better
+    results. When passing ~105 workers, the model’s precision decreases by ~0.3%. Moreover, In figure 6 (c) and 6 (d),
+    the improvement slope decrease as the number of workers increases, which is reflected in the “elbow” shape.
+</p>    
+
+<h2 id="Conclusion">Conclusion</h2>
+<p>
+  As the size of datasets and models’ complexity increases, distributed training will become more and more common in
+    the MLOps ecosystem. As we saw, a delay in one training cycle has a high impact on the entire training process.
+    Thus, the need to perfect the training process and reduce the time per epoch is high. If you have more ideas,
+    questions, or thoughts — I’d love to hear about them!
+      </p>
+      
+      
+      
+      
+      
+    </main>
+  </body>
+</html>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML"></script>
