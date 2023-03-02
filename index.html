@@ -159,6 +159,57 @@ I will explain this concept using image analysis as it is difficult to illustrat
 </div></center>
 </ol>
  <strong>Tokenizer:</strong>
+ <p>To incorporate the description into the model, we needed to tokenize the text to extract features. Thanks to Hugging Face's AutoTokenizer, this process was automated according to the selected model, saving us a considerable amount of time.
+      </p>
+  <p>Tokenization is a crucial step in NLP, as it involves breaking down raw text into individual tokens (such as words or subwords) that can be further processed. However, selecting the right tokenizer can be challenging since different models and tasks may require different approaches.
+      </p>
+<p>AutoTokenizer solves this problem by automatically selecting the appropriate tokenizer based on the model architecture and task. By using AutoTokenizer, we were able to streamline the selection and configuration of the tokenizer, ultimately saving us time and effort.
+  </p>
+      
+  <strong>Target definition and metrics: </strong>
+<p>We explored various approaches for training our data. These included:</p>
+ <p>     
+<li>
+Conducting a <strong>regression analysis on all available data</strong> and testing for general error (MAE). We also examined error concentration in problem areas, such as the end of the left tail where there is a bias. The advantage of this method is that we have a large amount of data, and we don't need to establish a threshold for identifying bias. However, the disadvantage is that the data is unbalanced, which could negatively impact performance in areas with bias.
+  <p>The objective loss of this method was RMSE.</p>
+</li>
+<li>
+Limiting our <strong>regression analysis to the area where bias exists</strong>, and balancing it with data of the same size from areas without bias. This approach balances the data, but it comes at the cost of losing some information.
+  <p>The objective loss of this method was RMSE.</p>
+</li>
+<li>
+Using a <strong>classification</strong> approach to train the model <strong>on the area where there is bias</strong> and balancing it with data of the same size from areas without bias. This method balances the data and may result in easier model training, but it requires establishing a threshold for identifying bias, and we still lose some data.
+<p>Since the data is balanced in this case, we used RMSE as objective loss but also examined the confusion matrix of this method.</p>  
+</li>
+ </p>
+ <p>
+In summary, we explored different ways to train our data, each with its own set of advantages and disadvantages.
+      </p>  
+<h2 id="results">Results</h2>
+      
+<p>
+  The initial model showed promising results, achieving over 90% accuracy across all methods. However, during one of the last tests, the model was run with a random target under the same distribution parameters as the original target, and the accuracy remained unchanged. After verifying that there was no correlation between the random target and the original target, my confidence in the model was lost, and it will not be deployed in our website.
+      </p>
+<ol>
+   <center><p><img width="500" src="images/image007.png" /></p></center>
+</ol>  
+      
+<p>
+One possible explanation for the model's high accuracy on a random target is that there may be many similar, albeit not identical, texts in the data. The model learns these texts during training, allowing it to predict answers accurately during validation.
+</p>
+<p>
+ A naive solution to this problem is to set a difference threshold, only allowing texts that differ beyond this threshold to be entered. In other words, duplicates will be downloaded even if they are not 100% identical. However, this solution has a time complexity of O(n^2), making it impractical for large datasets such as the one being used (n is ~50K). 
+</p>
+Although there may be smarter solutions, we do not have enough time to implement them. Therefore, we will use results from previous studies in the field (not necessarily related to machine learning) and recommendations from international organizations to create a list of words that may contain gender bias. This list will then be embedded into our website.      
+<p>
+The websites and studies that we will use include:  
+</p>
+<p>Source: <a href="https://eige.europa.eu/publications/gender-sensitive-communication/practical-tools/examples-common-gendered-nouns-alternatives"></a>Gender- sensitive Communication - European Institute for Gender Equality</p>
+<p>Source: <a href="https://www.researchgate.net/publication/50303045_Evidence_That_Gendered_Wording_in_Job_Advertisements_Exists_and_Sustains_Gender_Inequality"></a>Evidence That Gendered Wording in Job Advertisements Exists and Sustains Gender Inequality</p>
+ 
+<h2 id="legal-opinion">Legal Opinion</h2>
+      
+      
      
       
       
