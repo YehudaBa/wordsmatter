@@ -85,12 +85,38 @@ Its size is about <strong>15M samples</strong>.
 </li>
   
   
-<h1 class="tmp">insert image</h1>
+<ol>
+   <center><p><img width="500" src="images/image001.png" /></p></center>
+</ol>
+<ol>
+<center><p><img width="500" src="images/image002.png" /></p></center>
+</ol>
+<p>To ensure <strong>information security</strong> and protect <strong>user privacy</strong>, I have not included all columns in the presentation of data. Additionally, (just for the presentation here) the columns have been deliberately mixed up and a fictitious CompPositionID has been used.</p>
 
-<p>Synchronous stochastic gradient descent is a common way of distributing the training process of machine learning
-    models with data parallelism. In synchronous training, a root aggregator node fans-out requests to many leaf nodes
-    that work in parallel over different input data slices and return their results to the root node to aggregate.</p>
+<strong>Date engineering:</strong>
+      
+<p>We used the <a href="https://pypi.org/project/gender-guesser/">gender_guesser</a> library to extract the gender of users from the list of unique first names in the data. Afterward, we joined this information back to the users table.
+  For example:</p>
+<center><p><img width="500" src="images/image003.png" /></p></center>
+      
+ <strong>Bias index:</strong>    
+ <p>
+   To assess gender bias in job applications, we calculated a gender ratio by comparing the number of women who applied for each job to the number of men who applied for that same job. We then computed this ratio for each job field, such as lawyer or doctor, in our dataset.
+</p>
+<p> 
+  Next, we developed a "bias index" that measures the variance or distance between the job ratio for each specific job and the average ratio for that job field. This index provides information about whether there is gender bias in the applicant pool for a particular job, relative to the overall ratio for that job field. The index ranges from -1 to 1, with -1 indicating bias against women, 1 indicating bias against men, and 0 indicating no bias.
+</p>
+<p> 
+ To increase confidence in our analysis, we excluded job fields with fewer than 10 unique ads and jobs with fewer than 5 applicants.  
+</p>
 
+ <strong>Example:</strong> 
+      
+      
+      
+      
+      
+      
 <h2 id="stochastic-gradient-descent">Stochastic Gradient Descent</h2>
 
 <p>Before we dive into the implementation details and challenges, let’s first understand what stochastic gradient
