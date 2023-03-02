@@ -47,15 +47,15 @@ Winter semester 2022 – 2023
       <h2 class="reichman-name">Reichman University</h2>
       <!-- <h2 class="project-tagline" color=white><a href="website_homepage.htm">Home</a> <a href="website_hills.htm">Hills Pupil Tailored Website</a></h2> -->
       <h2 class="project-tagline"><a href="https://www.linkedin.com/in/yehuda-baharav/"  style="color:#ffffff">Yehuda Baharav - Efi Arazi School of Computer Science</a>
-      <h2 class="project-tagline"><a href="linkedin.com/in/tomer-bar-tal-516127241"  style="color:#ffffff">Tomer Bar-Tal - Radzyner Law School</a>
+      <h2 class="project-tagline"><a href="https://www.linkedin.com/in/tomer-bar-tal-516127241"  style="color:#ffffff">Tomer Bar-Tal - Radzyner Law School</a>
       <h2 class="project-tagline"><a style="color:#ffffff">Shahaf Sherman - Radzyner Law School</a>
       <h2 class="project-tagline"><a style="color:#ffffff">Nizar - Radzyner Law School</a>     
     </header>
 
     <main id="content" class="main-content" role="main">
 
-This paper was written by <a href=""></a> ,
-      <a href="https://www.linkedin.com/in/yehuda-baharav/">Yehuda Baharav</a>, <a href="linkedin.com/in/tomer-bar-tal-516127241"></a>, Shahaf Sherman and Nizar from Reichman University.
+This paper was written by 
+      <a href="https://www.linkedin.com/in/yehuda-baharav/">Yehuda Baharav</a>, <a href="https://www.linkedin.com/in/tomer-bar-tal-516127241">Tomer Bar-Tal</a>, Shahaf Sherman and Nizar from Reichman University.
 
 <h2 id="Introduction">Introduction</h2>
 
@@ -70,19 +70,22 @@ To address this problem, we will build a website that will assist recruiters in 
 </p>
 
 <h2 id="methodology">Methodology</h2>
-<p>In recent years, we’ve seen the power of large-scale deep learning projects. Projects like GPT-3, its open-source
-    version — GPT-NeoX-20B, and MT-NLG- involve model and dataset sizes that would be unfathomable only a few years
-    ago and currently dominate the state of the art. We can see exponential growth in the complexity of the models,
-    the number of parameters, and the size of datasets. This trend raised the demand for large-scale processing to the
-    point where it has outpaced the increase in computation power of a single machine. The need to distribute the machine
-    learning workload across multiple machines has been raised and led to the Synchronous Distributed Training idea.</p>
-
-<ol>
-  <strong>Note:</strong>
-  There is a difference between distributed training and distributed inference. if a machine learning service receives
-    a large number of requests, we need to distribute the model over several machines to accommodate the load. Scaling
-    training, on the other hand, is when training the same model on more than one machine.
-</ol>
+<p>
+  In the initial phase of our research, we opted to construct an NLP (Natural Language Processing) model aimed at identifying instances of gender bias in recruitment advertisements.
+ </p>
+<strong>Data:</strong>      
+<p>We obtained the data from <a href="https://pandologic.com/">Pandologic</a>, which consists of 2 tables:</p>
+<li>
+<strong>Jobs table</strong>, containing the job title, field, and description.
+Its size is about <strong>50K samples</strong>.
+</li>
+<li>
+<strong>Job seekers table</strong> that includes their first and last names, email addresses, physical addresses, and other personal information. This table also indicates the jobs for which each job seeker applied.
+Its size is about <strong>15M samples<strong/>.
+</li>
+  
+  
+<h1 class="tmp">insert image</h1>
 
 <p>Synchronous stochastic gradient descent is a common way of distributing the training process of machine learning
     models with data parallelism. In synchronous training, a root aggregator node fans-out requests to many leaf nodes
