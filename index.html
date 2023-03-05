@@ -107,7 +107,7 @@ Its size is about <strong>15M samples</strong>.
     </p>
 </div></center>
   </ol>
-<p>To ensure <strong>information security</strong> and protect <strong>user privacy</strong>, I have not included all columns in the presentation of data. Additionally, (just for the presentation here) the columns have been deliberately mixed up and a fictitious CompPositionID has been used.</p>
+<p>To ensure <strong>information security</strong> and protect <strong>user privacy</strong>, we have not included all columns in the presentation of data. Additionally, (just for the presentation here) the columns have been deliberately mixed up and a fictitious CompPositionID has been used.</p>
 
 <strong>Date engineering:</strong>
       
@@ -178,14 +178,14 @@ Skills:General Practice
       
 <strong>Transfer learning - NLP model:</strong>
 <p>
-Initially, I experimented with traditional machine learning techniques such as boosting. However, I quickly realized that this approach was not suitable, and therefore, we will not delve into it further. Instead, I opted for using a pre-trained model
-<a href="https://huggingface.co/distilbert-base-uncased">distilbert-base-uncased</a> by dropping the last layer, and training it on my data. If required, I would also train a few more layers backwards.
+Initially, We experimented with traditional machine learning techniques such as boosting. However, we quickly realized that this approach was not suitable, and therefore, we will not delve into it further. Instead, we opted for using a pre-trained model
+<a href="https://huggingface.co/distilbert-base-uncased">distilbert-base-uncased</a> by dropping the last layer, and training it on our data. If required, we would also train a few more layers backwards.
 </p>
 <p>
   The rationale behind using a pre-trained model is that in deep learning, the semantic meaning becomes more complex as we move deeper into the layers. Hence, the initial layers can be used for nearly any purpose in the field, such as text analysis in our case. The only aspect that needs to be learned about our target is limited to the last few layers.
 </p>
 <p>
-I will explain this concept using image analysis as it is difficult to illustrate visually with text analysis. In the initial stage, the model identifies more general features, such as differences between pixels in the image. Similarly, in text analysis, this could include identifying the language of the text or analyzing linking words. As the analysis progresses, the model delves deeper into more meaningful features, such as identifying the presence of a person in a specific area of the picture. In text analysis, this could mean analyzing the use of high language in a particular sentence compared to the sentences before and after it.
+We will explain this concept using image analysis as it is difficult to illustrate visually with text analysis. In the initial stage, the model identifies more general features, such as differences between pixels in the image. Similarly, in text analysis, this could include identifying the language of the text or analyzing linking words. As the analysis progresses, the model delves deeper into more meaningful features, such as identifying the presence of a person in a specific area of the picture. In text analysis, this could mean analyzing the use of high language in a particular sentence compared to the sentences before and after it.
 </p>
 <ol>
   <center><div class="img-Sync-SGD-diagram">
@@ -223,7 +223,7 @@ In summary, we explored different ways to train our data, each with its own set 
 <h2 id="results">Results</h2>
       
 <p>
-  The initial model showed promising results, achieving over 90% accuracy across all methods. However, during one of the last tests, the model was run with a random target under the same distribution parameters as the original target, and the accuracy remained unchanged. After verifying that there was no correlation between the random target and the original target, my confidence in the model was lost, and it will not be deployed in our website.
+  The initial model showed promising results, achieving over 90% accuracy across all methods. However, during one of the last tests, the model was run with a random target under the same distribution parameters as the original target, and the accuracy remained unchanged. After verifying that there was no correlation between the random target and the original target, our confidence in the model was lost, and it will not be deployed in our website.
       </p>
 
 <ol>
@@ -290,7 +290,7 @@ The results of our research indicate that bias against women in certain job fiel
 Our website is a step towards creating a more diverse and inclusive workplace, and we hope that our work will encourage more companies to take action against gender bias. It is crucial to keep striving towards equal opportunities and treatment for all genders in the workplace, and we believe that our study can contribute to this goal.
 </p>
 <p>
-We believe that it is technically feasible to create the desired model using the data we have tested. However, extensive research would be necessary, which exceeds the scope of the current course. I will be enthusiastic about pursuing further research on this project, either as part of future degree courses or projects, or during my free time.
+We believe that it is technically feasible to create the desired model using the data we have tested. However, extensive research would be necessary, which exceeds the scope of the current course. We will be enthusiastic about pursuing further research on this project, either as part of future degree courses or projects, or during my free time.
 </p>
 
 <h2 id="our-website">Our Website</h2>
